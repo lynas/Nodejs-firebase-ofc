@@ -1,42 +1,21 @@
 const functions = require('firebase-functions');
-const firebase = require('firebase-admin');
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const app = express();
-const firebaseApp = firebase.initializeApp(functions.config().firebase);
+const secureRouter = express.Router();
 
-function getFacts() {
-        const ref = firebaseApp.database().ref('auth_user');
-        return ref.once('value').then(snap => snap.val());
-}
+app.use('/secure', secureRouter);
+process.env.SECRET_KEY = "mysecretkey";
 
+// router config starts
+const authRouter = require('./controller/AuthenticateController');
+app.get('/api/auth', authRouter.authenticate);
 
-function addAuthUser() {
-        const ref = firebaseApp.database().ref('auth_user');
-        return ref.set({
-                "username": "sazzad",
-                "password": "[a$06$KDIFlcJDtQOfPnLp/Llwt..UNP6HzrsIZ2CP81/OehgO5zMZcdbGu"
-        });
-}
+const authUserRouter = require('./controller/AuthUserController');
+app.get('/api/auth_user', authUserRouter.getAllUsers);
+app.post('/api/auth_user', authUserRouter.createAuthUser);
+// router config starts
 
-app.get('/', (request, res) => {
-        getFacts().then(facts => {
-                res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify(facts));
-        });
-});
-
-
-app.post('/', (request, res) => {
-        getFacts().then(facts => {
-                res.setHeader('Content-Type', 'application/json');
-                res.send(addAuthUser());
-
-        });
-});
-
-
-// Create and Deploy Your First Cloud Functions
-// https://firebase.google.com/docs/functions/write-firebase-functions
 
 
 exports.app = functions.https.onRequest(app);
