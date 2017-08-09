@@ -8,13 +8,7 @@ app.use('/secure', secureRouter);
 process.env.SECRET_KEY = "mysecretkey";
 
 // router config starts
-const authRouter = require('./controller/AuthenticateController');
-app.get('/api/auth', authRouter.authenticate);
-
-const authUserRouter = require('./controller/AuthUserController');
-app.get('/api/auth_user', authUserRouter.getAllUsers);
-app.post('/api/auth_user', authUserRouter.createAuthUser);
-// router config starts
+app.use(require('./controller'));
 
 
 

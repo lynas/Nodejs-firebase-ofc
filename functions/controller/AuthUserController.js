@@ -1,7 +1,7 @@
 const functions = require('firebase-functions');
 const firebase = require('firebase-admin');
 const firebaseApp = firebase.initializeApp(functions.config().firebase);
-
+const uuidv1 = require('uuid/v1');
 
 function getAuthUserNodeRoot() {
     const ref = firebaseApp.database().ref('auth_user');
@@ -10,10 +10,37 @@ function getAuthUserNodeRoot() {
 
 
 function addAuthUser() {
+    const user_id = uuidv1();
     const ref = firebaseApp.database().ref('auth_user');
-    return ref.set({
+    const userInfo = {
+        "id": user_id,
         "username": "sazzad2",
         "password": "[a$06$KDIFlcJDtQOfPnLp/Llwt..UNP6HzrsIZ2CP81/OehgO5zMZcdbGu2"
+    };
+    // ref.push(userInfo, function (err, data) {
+    //     if (err) {
+    //         return {
+    //             success : false
+    //         }
+    //     }
+    //     return {
+    //         success: true,
+    //         data : data
+    //     }
+    // });
+
+
+
+    ref.child(user_id).set(userInfo, function (err, data) {
+        if (err) {
+            return {
+                success : false
+            }
+        }
+        return {
+            success: true,
+            data : data
+        }
     });
 }
 
